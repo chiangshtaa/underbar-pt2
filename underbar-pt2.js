@@ -21,12 +21,26 @@ const { each } = require('./underbar-pt1');
 const extend = function(obj) {
   // Your code here
   // Hint: remember that Array.from can convert an array-like object to handy-dandy array for you.
+  for (let i = 1; i < arguments.length; i++) {
+    for (let key in arguments[i]) {
+      obj[key] = arguments[i][key];
+    }
+  }
+  return obj;
 };
 
 // Like extend, but doesn't ever overwrite a key that already
 // exists in obj
 const defaults = function(obj) {
   // Your code here
+  for (let i = 1; i < arguments.length; i++) {
+    for (let key in arguments[i]) {
+      if (!obj.hasOwnProperty(key)) {
+        obj[key] = arguments[i][key];
+      }
+    }
+  }
+  return obj;
 };
 
 
@@ -42,6 +56,16 @@ const defaults = function(obj) {
 // should return the previously returned value.
 const once = function(func) {
   // Hint: you're going to need to return another function that you create inside this function.
+  // **It is often used to pass the arguments from one function call to another -- func.apply(this, arg).
+  let hasRun = false;
+  let result;
+  return function() {
+    if (!hasRun) {
+      result = func.apply(this, arguments);
+      hasRun = true;
+    }
+    return result;
+  }
 };
 
 // Memorize an expensive function's results by storing them. You may assume
@@ -55,6 +79,7 @@ const once = function(func) {
 const memoize = function(func) {
   // Hint: look up Function.apply
   // Your code here
+  const storage = {};
 };
 
 // Delays a function for the given number of milliseconds, and then calls
@@ -76,6 +101,19 @@ const delay = function(func, wait) {
 const shuffle = function(arr) {
   // Hint: See http://bost.ocks.org/mike/shuffle/ for an in-depth explanation of the
   // Fisher-Yates Shuffle
+  const arrLength = arr.length;
+  const array = [];
+  const obj = {};
+  for (let i = 0; i < arrLength; i++) {
+    let num = Math.floor(Math.random() * arrLength);
+    if (obj[num]) {
+      return shuffle(array);
+    } else {
+      obj[num] = arr[i];
+      array[num] = arr[i];
+    }
+  }
+  return array;
 };
 
 module.exports = {
