@@ -79,7 +79,16 @@ const once = function(func) {
 const memoize = function(func) {
   // Hint: look up Function.apply
   // Your code here
-  const storage = {};
+    const memoizedFunc = function() {
+    const cache = memoizedFunc.cache;
+    const key = JSON.stringify(arguments);
+    if (!cache[key]) {
+      cache[key] = func.apply(this, arguments);
+    }
+    return cache[key];
+  };
+  memoizedFunc.cache = {};
+  return memoizedFunc;
 };
 
 // Delays a function for the given number of milliseconds, and then calls
@@ -91,6 +100,10 @@ const memoize = function(func) {
 const delay = function(func, wait) {
   // Hint: delay things with the global function setTimeout()
   // Hint: look up Function.apply
+  const args = Array.prototype.slice.call(arguments, 2);
+  setTimeout(function() {
+    return func.apply(null, args);
+  }, wait);
 };
 
 // Randomizes the order of an array's contents.
@@ -101,20 +114,36 @@ const delay = function(func, wait) {
 const shuffle = function(arr) {
   // Hint: See http://bost.ocks.org/mike/shuffle/ for an in-depth explanation of the
   // Fisher-Yates Shuffle
-  const arrLength = arr.length;
-  const array = [];
-  const obj = {};
-  for (let i = 0; i < arrLength; i++) {
-    let num = Math.floor(Math.random() * arrLength);
-    if (obj[num]) {
-      return shuffle(array);
-    } else {
-      obj[num] = arr[i];
-      array[num] = arr[i];
-    }
+  let out = arr.slice();
+  let currentIdx = arr.length - 1;
+  let temp, swapIdx;
+
+  while (currentIdx) {
+    swapIdx = Math.floor(Math.random() * currentIdx);
+
+    currentIdx -= 1;
+
+    temp = out[currentIdx];
+    out[currentIdx] = out[swapIdx];
+    out[swapIdx] = temp;
   }
-  return array;
+
+  return out;
 };
+//   const arrLength = arr.length;
+//   const array = [];
+//   const obj = {};
+//   for (let i = 0; i < arrLength; i++) {
+//     let num = Math.floor(Math.random() * arrLength);
+//     if (obj[num]) {
+//       return shuffle(array);
+//     } else {
+//       obj[num] = arr[i];
+//       array[num] = arr[i];
+//     }
+//   }
+//   return array;
+// };
 
 module.exports = {
   extend: extend,
